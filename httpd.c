@@ -1,6 +1,5 @@
 
 #include "httpd.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -129,7 +128,7 @@ void respond(int n)
 
     buf = malloc(65535);
     rcvd=recv(clients[n], buf, 65535, 0);
-    //printf("eran:        %d : %s", rcvd,buf);
+    // printf("eran:        %d : %s", rcvd,buf);
     
     if (rcvd<0)    // receive error
         fprintf(stderr,("recv() error\n"));

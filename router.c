@@ -10,22 +10,22 @@ void route()
 
     ROUTE_GET("/")
     {
-        char* responst = getIndex();
-        printf("%s", responst);
-        free(responst);
+        char* response = get_Data();
+        printf("%s", response);
+        free(response);
     }
 
 
     ROUTE_POST("/home")
     {
-        char *page = loadHome(payload);
+        char *page = HomePage(payload);
         printf("%s",  page);
         free(page);
     }
 
     ROUTE_POST("/register") 
     {
-        char *page = signUP(payload);
+        char *page = SignUP(payload);
         printf("%s",  page);
         free(page);
     }

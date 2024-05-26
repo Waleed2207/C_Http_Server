@@ -1,6 +1,12 @@
 #include "includes.h"
+#define MaxLenght 9
 
 char* nane = "";
+
+void strcopy(char* dest , const char* src){
+    while(*src)
+        memset(dest++,  *src++, sizeof(char));
+}
 
 void replce(char* str, char c, char rep) {
     long sz = strlen(str);
@@ -101,42 +107,46 @@ char* setData(char* username, char* data) {
 }
 
 int Login(const char* userName, const char* password) {
-    
+
     if(userName == NULL || password == NULL)
         return -1;
-    
+
+    // MaxLenght = 8
+    int status = 0;
+    char buffName[MaxLenght] = {'\0'};
     char dilmeter[] = "-", *buffer = NULL;
     char *token;
     
     FILE* users = fopen(usersFilePath, "r");
     
     if(users == NULL) {
-          perror("Error opening file");
-          return -1;
+        perror("Error opening file");
+        return -1;
+
     }
-    
+
+    fprintf(stderr, "name: %s\nstatus: %d\n", buffName, status);
+
+    strcopy(buffName, userName); 
+
+    fprintf(stderr, "name: %s\nstatus: %d\n", buffName, status);
+
     size_t sz;
     while (readLine(&buffer, &sz, users) != -1) {
         token = strtok(buffer, dilmeter);
         if(strcmp(token, userName) == 0) {
             token = strtok(NULL, dilmeter);
-            if(strcmp(token, password) == 0) {
-                free(buffer);
-                fclose(users);
-                return 1;
-            }
-            else {
-                free(buffer);
-                fclose(users);
-                return -2;
-            }
-               
+            if(strcmp(token, password) == 0) 
+                status = 1;
+            else 
+                status = -2;
         }
     }
     free(buffer);
     fclose(users);
-    return 0;
+    return status;
 }
+
 
 
 int Register(const char* userName, const char* password) {
@@ -309,7 +319,7 @@ char* replaceSubString(char* str, char* substr, char* replace) {
 }
 
 
-char* loadHome(char* user) {
+char* HomePage(char* user) {
 
     if(user == NULL)
         return NULL;
@@ -341,12 +351,16 @@ char* loadHome(char* user) {
     
 
     if (res == -2) {
-        page = getPage("pages/user400.html");
-        page = replaceSubString(page, "%%%= msg %%%", " you got the password wrong.");
+        page = getPage("pages/index.html");
+        // Inject JavaScript into HTML to show an alert on page load
+        char* script = "<script>alert('You got the password wrong.');</script>";
+        page = replaceSubString(page, "</body>", script);
         return setRes(page, "400");
     }
 
-    page = getPage("pages/user404.html");
+    page = getPage("pages/index.html");
+    char* script="<script>alert('We have conducted a thorough search, yet the user remains unfound.')</script>";
+    page = replaceSubString(page, "</body>", script);
     return setRes(page, "404");
 }
 
@@ -365,13 +379,13 @@ char *getHome(char* username) {
     return setRes(page, NULL);
 }
 
-char* getIndex() {
+char* get_Data() {
 
     char* index = getPage("pages/index.html");
     return setRes(index, NULL);
 }
 
-char* signUP (char* user) {
+char* SignUP (char* user) {
 
     if(user == NULL)
         return NULL;
@@ -388,12 +402,13 @@ char* signUP (char* user) {
     char *page;
 
     if(result == -1) {
-        page = getPage("pages/user400.html");
-        page = replaceSubString(page, "%%%= msg %%%", " the user exists in the database.");
+        page = getPage("pages/index.html");
+        char* script = "<script>alert('the user exists in the database.');</script>";
+        page = replaceSubString(page, "</body>", script);
         return setRes(page, "400");
     }
     
     char* index = getPage("pages/index.html");
 
-    return getIndex();
+    return get_Data();
 }
