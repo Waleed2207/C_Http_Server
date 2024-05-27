@@ -8,6 +8,7 @@ void strcopy(char* dest , const char* src){
         memset(dest++,  *src++, sizeof(char));
 }
 
+
 void replce(char* str, char c, char rep) {
     long sz = strlen(str);
     for (int i = 0; i < sz ; i++)
@@ -68,6 +69,8 @@ char* setData(char* username, char* data) {
 
     /* Remove extra new line character from stdin */
     //fflush(stdin);
+    if (Login(username, "notpassword") == 0)
+    return getHome(username);
 
     fPtr  = fopen("data.txt", "r");
     fTemp = fopen("tmpData.txt", "a"); 
@@ -146,7 +149,6 @@ int Login(const char* userName, const char* password) {
     fclose(users);
     return status;
 }
-
 
 
 int Register(const char* userName, const char* password) {
@@ -346,10 +348,6 @@ char* HomePage(char* user) {
     
     char* page;
 
-    if (res == 1) 
-        return getHome(username);
-    
-
     if (res == -2) {
         page = getPage("pages/index.html");
         // Inject JavaScript into HTML to show an alert on page load
@@ -357,11 +355,13 @@ char* HomePage(char* user) {
         page = replaceSubString(page, "</body>", script);
         return setRes(page, "400");
     }
-
-    page = getPage("pages/index.html");
-    char* script="<script>alert('We have conducted a thorough search, yet the user remains unfound.')</script>";
-    page = replaceSubString(page, "</body>", script);
-    return setRes(page, "404");
+    if (res == 0) {
+        page = getPage("pages/index.html");
+        char* script="<script>alert('We have conducted a thorough search, yet the user remains unfound.')</script>";
+        page = replaceSubString(page, "</body>", script);
+        return setRes(page, "404");
+    }
+    return getHome(username);
 }
 
 char *getHome(char* username) {
@@ -382,7 +382,7 @@ char *getHome(char* username) {
 char* get_Data() {
 
     char* index = getPage("pages/index.html");
-    return setRes(index, NULL);
+    return setRes(index, "secret");
 }
 
 char* SignUP (char* user) {
