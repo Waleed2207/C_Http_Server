@@ -1,5 +1,5 @@
 #include "includes.h"
-#define MaxLenght 9
+#define MaxLenght 8
 
 char* nane = "";
 
@@ -114,7 +114,6 @@ int Login(const char* userName, const char* password) {
     if(userName == NULL || password == NULL)
         return -1;
 
-    // MaxLenght = 8
     int status = 0;
     char buffName[MaxLenght] = {'\0'};
     char dilmeter[] = "-", *buffer = NULL;
@@ -186,7 +185,7 @@ ssize_t readLine(char **lineptr, size_t *n, FILE *stream) {
         (*lineptr)[i++] = (char) c;
         if (i == *n) {
             *lineptr = realloc(*lineptr, sizeof(char) * *n * 2);
-            *n *= 2;
+            *n *= 2; 
         }
     }
     
